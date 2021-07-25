@@ -1,0 +1,15 @@
+.navButton {
+  float: left;
+
+  div {
+    display: block;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+
+  div:hover {
+    background-color: #111;
+    cursor: pointer;
+  }
+}

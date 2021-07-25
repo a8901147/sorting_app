@@ -1,0 +1,15 @@
+.bar {
+  border-radius: 5px 5px 0 0;
+  //background-color: #ff4136;
+  grid-row-start: 1;
+  grid-row-end: 101;
+  min-width: 1px;
+  position: relative;
+
+  &__text {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

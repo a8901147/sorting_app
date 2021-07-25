@@ -1,0 +1,10 @@
+.barPanel {
+  display: grid;
+  /* grid-template-columns: repeat(12, 1fr); */
+  grid-template-rows: repeat(100, 1fr);
+  grid-column-gap: 1.5px;
+  height: 85vh;
+  width: 70vw;
+  padding: 5px 10px;
+  margin: auto;
+}
