@@ -1,28 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 import SortingType from "../function/sortingType";
-import Status from "../function/status";
-
-// Change this value for the number of bars (value) in the array.
-function randomIntFromInterval(min, max) {
-  // min and max included
-  return Math.floor(Math.random() * (max - min) + min);
-}
-
-function randomArray(number) {
-  const array = [];
-  for (let i = 0; i < number; i++) {
-    array.push(randomIntFromInterval(1, 701));
-  }
-  return array;
-}
+import BarStatus from "../function/barStatus";
+import {
+  initialBarArray,
+  NUMBER_OF_ARRAY_BARS,
+  totalCounter_bubble,
+  delayValue,
+} from "../function/initial";
 
 const initialArrayState = {
-  barArray: [],
-  number_of_array_bars: 50,
+  barArray: initialBarArray(NUMBER_OF_ARRAY_BARS),
+  number_of_array_bars: NUMBER_OF_ARRAY_BARS,
   sortType: SortingType.BUBBLE_SORT,
-  sortingCounter: -1,
-  finishedCounter: 0,
-  delay: 1,
+  totalCounter: totalCounter_bubble(NUMBER_OF_ARRAY_BARS - 1),
+  outerLoopCounter: 0,
+  innerLoopCounter: NUMBER_OF_ARRAY_BARS - 2,
+  delay: delayValue(NUMBER_OF_ARRAY_BARS),
 };
 
 const arraySlice = createSlice({
@@ -30,122 +23,61 @@ const arraySlice = createSlice({
   initialState: initialArrayState,
   reducers: {
     resetArray(state, action) {
-      state.barArray = [];
-      state.delay = action.payload.delay;
+      state.barArray = initialBarArray(action.payload.number_of_array_bars);
       state.number_of_array_bars = action.payload.number_of_array_bars;
-      state.finishedCounter = state.number_of_array_bars - 1;
-      state.sortType = action.payload.sortType;
-      state.sortingCounter = -1;
-      const newArray = randomArray(state.number_of_array_bars);
+      state.totalCounter = totalCounter_bubble(
+        action.payload.number_of_array_bars - 1
+      );
 
-      for (var i = 0; i < newArray.length; i++) {
-        state.barArray.push({
-          id: i,
-          number: newArray[i],
-          status: Status.WAITING,
-        });
-      }
+      state.outerLoopCounter = 0;
+      state.innerLoopCounter = action.payload.number_of_array_bars - 2;
+      state.delay = delayValue(action.payload.number_of_array_bars);
     },
     resetSortType(state, action) {
       state.sortType = action.payload;
     },
-    sortArray(state, action) {
-      if (state.sortType === SortingType.BUBBLE_SORT) {
-        state.sortingCounter++;
-        if (state.sortingCounter !== 0) {
-          state.barArray[state.sortingCounter - 1].status =
-            state.barArray[state.sortingCounter - 1].status === Status.FINISHING
-              ? Status.FINISHING
-              : Status.WAITING;
-        }
-        state.barArray[state.sortingCounter].status =
-          state.barArray[state.sortingCounter].status === Status.FINISHING
-            ? Status.FINISHING
-            : Status.PROCESSING;
-        state.barArray[state.sortingCounter + 1].status =
-          state.barArray[state.sortingCounter + 1].status === Status.FINISHING
-            ? Status.FINISHING
-            : Status.PROCESSING;
+    bubble_Green(state, action) {
+      if (
+        state.barArray[state.outerLoopCounter].number <
+        state.barArray[state.outerLoopCounter + 1].number
+      ) {
+        state.barArray[state.outerLoopCounter].status = BarStatus.PROCESSING;
+        state.barArray[state.outerLoopCounter + 1].status =
+          BarStatus.PROCESSING;
+      } else {
+        state.barArray[state.outerLoopCounter].status = BarStatus.STOPING;
+        state.barArray[state.outerLoopCounter + 1].status = BarStatus.STOPING;
+      }
+    },
+    bubble_Swap(state) {
+      if (
+        state.barArray[state.outerLoopCounter].number >
+        state.barArray[state.outerLoopCounter + 1].number
+      ) {
+        [
+          state.barArray[state.outerLoopCounter],
+          state.barArray[state.outerLoopCounter + 1],
+        ] = [
+          state.barArray[state.outerLoopCounter + 1],
+          state.barArray[state.outerLoopCounter],
+        ];
+      }
+    },
+    bubble_Finish(state) {
+      if (state.outerLoopCounter === 0 && state.innerLoopCounter === 0) {
+        state.barArray[state.outerLoopCounter].status = BarStatus.FINISHING;
+        state.barArray[state.outerLoopCounter + 1].status = BarStatus.FINISHING;
+      } else {
+        state.barArray[state.outerLoopCounter].status = BarStatus.WAITING;
+        state.barArray[state.outerLoopCounter + 1].status = BarStatus.WAITING;
+      }
 
-        console.log("**sortArray**");
-      } else if (state.sortType === SortingType.SELECTION_SORT) {
-        //TODO:
-      } else if (state.sortType === SortingType.MERGE_SORT) {
-        //TODO:
-      }
-    },
-    stop(state) {
-      if (
-        state.sortType === SortingType.BUBBLE_SORT &&
-        state.sortingCounter !== -1
-      ) {
-        if (
-          state.barArray[state.sortingCounter].number >
-          state.barArray[state.sortingCounter + 1].number
-        ) {
-          state.barArray[state.sortingCounter].status =
-            state.barArray[state.sortingCounter].status === Status.FINISHING
-              ? Status.FINISHING
-              : Status.STOPING;
-          state.barArray[state.sortingCounter + 1].status =
-            state.barArray[state.sortingCounter + 1].status === Status.FINISHING
-              ? Status.FINISHING
-              : Status.STOPING;
-          console.log("**stop**");
-        }
-      }
-    },
-    swap(state, action) {
-      if (
-        state.sortType === SortingType.BUBBLE_SORT &&
-        state.sortingCounter !== -1
-      ) {
-        if (
-          state.barArray[state.sortingCounter].number >
-          state.barArray[state.sortingCounter + 1].number
-        ) {
-          [
-            state.barArray[state.sortingCounter],
-            state.barArray[state.sortingCounter + 1],
-          ] = [
-            state.barArray[state.sortingCounter + 1],
-            state.barArray[state.sortingCounter],
-          ];
-          console.log("**swap**");
-        }
-      }
-    },
-    goNext(state) {
-      if (
-        state.sortType === SortingType.BUBBLE_SORT &&
-        state.sortingCounter !== -1
-      ) {
-        if (
-          state.barArray[state.sortingCounter].number <
-          state.barArray[state.sortingCounter + 1].number
-        ) {
-          state.barArray[state.sortingCounter].status =
-            state.barArray[state.sortingCounter].status === Status.FINISHING
-              ? Status.FINISHING
-              : Status.PROCESSING;
-          state.barArray[state.sortingCounter + 1].status =
-            state.barArray[state.sortingCounter + 1].status === Status.FINISHING
-              ? Status.FINISHING
-              : Status.PROCESSING;
-        }
-        if (
-          state.sortingCounter === state.barArray.length - 2 &&
-          state.finishedCounter >= 0
-        ) {
-          state.barArray[state.finishedCounter].status = Status.FINISHING;
-          // detail
-          if (state.finishedCounter === state.number_of_array_bars - 1) {
-            state.barArray[state.finishedCounter - 1].status = Status.WAITING;
-          }
-          state.finishedCounter--;
-          state.sortingCounter = -1;
-          console.log("**goNext**");
-        }
+      if (state.outerLoopCounter === state.innerLoopCounter) {
+        state.barArray[state.outerLoopCounter + 1].status = BarStatus.FINISHING;
+        state.innerLoopCounter--;
+        state.outerLoopCounter = 0;
+      } else {
+        state.outerLoopCounter++;
       }
     },
   },

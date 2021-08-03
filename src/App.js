@@ -8,10 +8,6 @@ function App() {
   const sortType = useSelector((state) => state.array.sortType);
   const sortingCounter = useSelector((state) => state.array.sortingCounter);
   const barArray = useSelector((state) => state.array.barArray);
-  const delay = useSelector((state) => state.array.delay);
-  const number_of_array_bars = useSelector(
-    (state) => state.array.number_of_array_bars
-  );
 
   return (
     <Fragment>
@@ -19,8 +15,6 @@ function App() {
         sortType={sortType}
         sortingCounter={sortingCounter}
         barArray={barArray}
-        number_of_array_bars={number_of_array_bars}
-        delay={delay}
       />
       <BarPanel sortType={sortType} sortingCounter={sortingCounter} />
     </Fragment>

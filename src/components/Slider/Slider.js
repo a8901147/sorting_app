@@ -10,11 +10,8 @@ function Slider(props) {
     dispatch(
       arrayActions.resetArray({
         number_of_array_bars: arraySize.current.value,
-        delay: arraySize.current.value > 40 ? 1 : 40 - arraySize.current.value,
-        sortType: props.sortType,
       })
     );
-    console.log(arraySize.current.value);
   };
 
   return (

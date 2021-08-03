@@ -1,51 +1,46 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import NavButton from "../NavButton/NavButton";
 import classes from "./NavBar.module.scss";
 import { arrayActions } from "../../store/array";
 import SortingType from "../../function/sortingType";
 import Slider from "../Slider/Slider";
 import NavNumber from "../NavNumber/NavNumber";
+import { sleep } from "../../function/sleep";
 
 function NavBar(props) {
   const dispatch = useDispatch();
+  const delay = useSelector((state) => state.array.delay);
+  const number_of_array_bars = useSelector(
+    (state) => state.array.number_of_array_bars
+  );
+  const totalCounter = useSelector((state) => state.array.totalCounter);
 
-  const recursive = (i) => {
-    console.log(i);
-    console.log(`Speed ${props.delay}`);
-
-    if (i === 1) return;
-    setTimeout(() => {
-      // level 1
-      dispatch(arrayActions.sortArray());
-      setTimeout(() => {
-        // level 2
-        dispatch(arrayActions.stop());
-        setTimeout(() => {
-          // level 3
-          dispatch(arrayActions.swap());
-          setTimeout(() => {
-            // level 4
-            dispatch(arrayActions.goNext());
-            recursive(--i);
-          }, props.delay);
-        }, props.delay);
-      }, props.delay);
-    }, props.delay);
+  const recursive = async (Counter) => {
+    console.log(Counter);
+    if (Counter === 0) {
+      return;
+    }
+    console.log(Counter);
+    dispatch(arrayActions.bubble_Green());
+    await sleep(delay);
+    dispatch(arrayActions.bubble_Swap());
+    await sleep(delay);
+    dispatch(arrayActions.bubble_Finish());
+    await sleep(delay);
+    Counter--;
+    recursive(Counter);
   };
 
   const generateArrayHandler = () => {
     dispatch(
       arrayActions.resetArray({
-        number_of_array_bars: props.number_of_array_bars,
-        sortType: props.sortType,
-        delay: props.delay,
+        number_of_array_bars: number_of_array_bars,
       })
     );
   };
 
   const startSortingHandler = () => {
-    const swapTimes = props.number_of_array_bars * props.number_of_array_bars;
-    recursive(swapTimes);
+    recursive(totalCounter);
   };
   const bubbleSortHandler = () => {
     dispatch(arrayActions.resetSortType(SortingType.BUBBLE_SORT));
@@ -71,7 +66,7 @@ function NavBar(props) {
       </NavButton>
       <NavButton onClick={startSortingHandler}>Sort!</NavButton>
       <Slider sortType={props.sortType}></Slider>
-      <NavNumber>{`Array Number: ${props.number_of_array_bars}`}</NavNumber>
+      <NavNumber>{`Array Number: ${number_of_array_bars}`}</NavNumber>
     </ul>
   );
 }

@@ -1,14 +1,14 @@
 import classes from "./Bar.module.scss";
-import Status from "../function/status";
+import BarStatus from "../function/barStatus";
 
 function Bar(props) {
   const height = Math.round((props.children / 700) * 100);
   const barBackgroundColor =
-    props.status === Status.WAITING
+    props.status === BarStatus.WAITING
       ? "#607D8B"
-      : props.status === Status.STOPING
+      : props.status === BarStatus.STOPING
       ? "#D32F2F"
-      : props.status === Status.FINISHING
+      : props.status === BarStatus.FINISHING
       ? "#FFC107"
       : "#4CAF50"; // purple
 
