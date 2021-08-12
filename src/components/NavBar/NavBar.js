@@ -8,7 +8,8 @@ import Slider from "../Slider/Slider";
 import NavNumber from "../NavNumber/NavNumber";
 import { sleep } from "../../function/sleep";
 import { delayValue } from "../../function/initial";
-import { selectionSortActions } from "../../store/selectionSort";
+import { selectionSortActions } from "../../store/selectionSortReducer";
+import { mergeSortActions } from "../../store/mergeSortReducer";
 
 function NavBar() {
   const dispatch = useDispatch();
@@ -20,10 +21,16 @@ function NavBar() {
   const select_number_of_array_bars = useSelector(
     (state) => state.select.number_of_array_bars
   );
+  const merge_number_of_array_bars = useSelector(
+    (state) => state.merge.number_of_array_bars
+  );
+
   const number_of_array_bars =
     sortType === SortingType.BUBBLE_SORT
       ? bubble_number_of_array_bars
-      : select_number_of_array_bars;
+      : sortType === SortingType.BUBBLE_SORT
+      ? select_number_of_array_bars
+      : merge_number_of_array_bars;
   const delay = delayValue(number_of_array_bars);
   const bubbleTotalCounter = useSelector((state) => state.bubble.totalCounter);
   const selectTotalCounter = useSelector((state) => state.select.totalCounter);
@@ -71,6 +78,12 @@ function NavBar() {
           number_of_array_bars: number_of_array_bars,
         })
       );
+    } else if (sortType === SortingType.MERGE_SORT) {
+      dispatch(
+        mergeSortActions.resetArray({
+          number_of_array_bars: number_of_array_bars,
+        })
+      );
     }
   };
 
@@ -79,6 +92,8 @@ function NavBar() {
       bubbleSort_recursive(bubbleTotalCounter);
     } else if (sortType === SortingType.SELECTION_SORT) {
       selectionSort_recursive(selectTotalCounter);
+    } else if (sortType === SortingType.MERGE_SORT) {
+      dispatch(mergeSortActions.merge_sort());
     }
   };
   const bubbleSortHandler = () => {

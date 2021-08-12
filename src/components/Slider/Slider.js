@@ -2,7 +2,8 @@ import { useRef } from "react";
 import { useDispatch } from "react-redux";
 import classes from "./Slider.module.scss";
 import { bubbleSortActions } from "../../store/bubbleSortReducer";
-import { selectionSortActions } from "../../store/selectionSort";
+import { selectionSortActions } from "../../store/selectionSortReducer";
+import { mergeSortActions } from "../../store/mergeSortReducer";
 import sortingType from "../../function/sortingType";
 
 function Slider(props) {
@@ -10,16 +11,20 @@ function Slider(props) {
   const dispatch = useDispatch();
   const changeHandler = () => {
     if (props.sortType === sortingType.BUBBLE_SORT) {
-      console.log("a");
       dispatch(
         bubbleSortActions.resetArray({
           number_of_array_bars: arraySize.current.value,
         })
       );
     } else if (props.sortType === sortingType.SELECTION_SORT) {
-      console.log("b");
       dispatch(
         selectionSortActions.resetArray({
+          number_of_array_bars: arraySize.current.value,
+        })
+      );
+    } else if (props.sortType === sortingType.MERGE_SORT) {
+      dispatch(
+        mergeSortActions.resetArray({
           number_of_array_bars: arraySize.current.value,
         })
       );

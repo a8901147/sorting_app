@@ -6,12 +6,15 @@ import sortingType from "../function/sortingType";
 function BarPanel(props) {
   const bubbleBarArray = useSelector((state) => state.bubble.barArray);
   const selectBarArray = useSelector((state) => state.select.barArray);
+  const mergeBarArray = useSelector((state) => state.merge.barArray);
   let barArray = [];
   const sortType = useSelector((state) => state.basic.sortType);
   if (sortType === sortingType.BUBBLE_SORT) {
     barArray = bubbleBarArray;
   } else if (sortType === sortingType.SELECTION_SORT) {
     barArray = selectBarArray;
+  } else if (sortType === sortingType.MERGE_SORT) {
+    barArray = mergeBarArray;
   }
   return (
     <div className={classes.barPanel}>

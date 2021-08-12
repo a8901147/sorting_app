@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import bubbleSortReducer from "./bubbleSortReducer";
-import selectionSortReducer from "./selectionSort";
+import selectionSortReducer from "./selectionSortReducer";
+import mergeSortReducer from "./mergeSortReducer";
 import basic from "./basic";
 
 const store = configureStore({
@@ -8,6 +9,7 @@ const store = configureStore({
     bubble: bubbleSortReducer,
     basic: basic,
     select: selectionSortReducer,
+    merge: mergeSortReducer,
   },
 });
 
