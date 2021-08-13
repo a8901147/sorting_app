@@ -86,14 +86,51 @@ function NavBar() {
       );
     }
   };
+  async function mergeSort_recursive(startPoint, arrayLength) {
+    if (arrayLength === 1) {
+      return { startPoint: startPoint, length: arrayLength };
+    }
 
-  const startSortingHandler = () => {
+    const mid = Math.ceil(arrayLength / 2);
+
+    const arrayLeft_startPoint = startPoint;
+    const arrayRight_startPoint = startPoint + mid;
+    const arrayLeft_length = mid;
+    const arrayRight_length = arrayLength - mid;
+    const array_l = await mergeSort_recursive(
+      arrayLeft_startPoint,
+      arrayLeft_length
+    );
+    const array_r = await mergeSort_recursive(
+      arrayRight_startPoint,
+      arrayRight_length
+    );
+
+    return mergeArray(array_l, array_r);
+  }
+
+  async function mergeArray(arrayLeft, arrayRight) {
+    await sleep(delay);
+    dispatch(
+      mergeSortActions.merge_sort({
+        arrayLeft: arrayLeft,
+        arrayRight: arrayRight,
+      })
+    );
+    return {
+      startPoint: arrayLeft.startPoint,
+      length: arrayLeft.length + arrayRight.length,
+    };
+  }
+
+  const startSortingHandler = async () => {
     if (sortType === SortingType.BUBBLE_SORT) {
       bubbleSort_recursive(bubbleTotalCounter);
     } else if (sortType === SortingType.SELECTION_SORT) {
       selectionSort_recursive(selectTotalCounter);
     } else if (sortType === SortingType.MERGE_SORT) {
-      dispatch(mergeSortActions.merge_sort());
+      await mergeSort_recursive(0, merge_number_of_array_bars);
+      dispatch(mergeSortActions.merge_finish());
     }
   };
   const bubbleSortHandler = () => {

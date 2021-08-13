@@ -10,6 +10,22 @@ function Slider(props) {
   const arraySize = useRef();
   const dispatch = useDispatch();
   const changeHandler = () => {
+    dispatch(
+      bubbleSortActions.resetArray({
+        number_of_array_bars: arraySize.current.value,
+      })
+    );
+    dispatch(
+      selectionSortActions.resetArray({
+        number_of_array_bars: arraySize.current.value,
+      })
+    );
+    dispatch(
+      mergeSortActions.resetArray({
+        number_of_array_bars: arraySize.current.value,
+      })
+    );
+    /*
     if (props.sortType === sortingType.BUBBLE_SORT) {
       dispatch(
         bubbleSortActions.resetArray({
@@ -29,6 +45,7 @@ function Slider(props) {
         })
       );
     }
+    */
   };
 
   return (
