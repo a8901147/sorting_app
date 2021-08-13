@@ -2,7 +2,7 @@ import classes from "./Bar.module.scss";
 import BarStatus from "../function/barStatus";
 
 function Bar(props) {
-  const height = Math.round((props.children / 700) * 100);
+  const height = Math.ceil((props.children / 700) * 100);
   const barBackgroundColor =
     props.status === BarStatus.WAITING
       ? "#607D8B"
